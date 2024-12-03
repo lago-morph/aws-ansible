@@ -53,5 +53,24 @@ And issuing a curl to that address returns the default nginx web page.
 This is already a LOT easier than dealing with SaltStack.  We will see what
 other hurdles we find with Ansible though.
 
+===============================================================================
+2024-12-03-2 Seed of idea
 
+The idea that I had comes from a few things about Ansible:
+- Agentless architecture (I think I can also do this with salt with salt-ssh?)
+- Concept of Execution Environments - essentially compiling a container with the Ansible controller and the configuration all bundled up
+- The fact that Ansible has terraform-like features for manipulating AWS
 
+What this leads to is a 2-step process:
+1.  Create the AWS infrastructure that you want to manage
+2.  Create an Ansible Execution Environment (I call it a "seed") to manage that infrastructure, and deploy it to ECS to run persistently.
+
+You could even combine these, but then you have to give the container running
+on ECS permissions to create AWS resources, which is probably not what you
+want.  But that could be an option for the future.
+
+Anyway, I will prototype this with step 1 still being done with Terraform
+(because I am familiar with that), then build a "seed", and deploy that to ECS
+to then manage the created resources.  This way I don't have to create an EC2
+instance to act as the configuration management system controller, like I did
+with aws-salt.
