@@ -74,3 +74,37 @@ Anyway, I will prototype this with step 1 still being done with Terraform
 to then manage the created resources.  This way I don't have to create an EC2
 instance to act as the configuration management system controller, like I did
 with aws-salt.
+
+===============================================================================
+2024-12-06 Design notes
+
+Doing some of the ansible labs on acloud.guru.  
+
+Looks like I can use an inventory plugin to grab hosts based on EC2 instance
+tags (or a lot of other criteria).
+
+List of inventory plugins:
+ansible-doc -t inventory -l
+
+Docs for ec2 plugin:
+ansible-doc -t inventory amazon.aws.aws_ec2
+
+With the idea of having an ECS container running ansible, would need the
+parameter "assume_role_arn" with a role listed that can list information about
+EC2 instances.
+
+Can use "compose" options to use jinja2 expressions to compose variables.
+
+Would want to use an include_filters key to only include EC2 instances that
+have an "ansible_inventory" or "cluster_type" or something tag defined.
+
+Looks like you define key/secret key in environment variables.  This only
+matters if doing it from my machine (I guess it doesn't pick up from aws
+cli?).  If it is running as an EC2 container then what matters is the IAM
+permissions/role for the container.
+
+Can also leverage ssm with "use_ssm_inventory".  I guess the question is if I
+should stash information in tags to the instances, or upload ssm keys.  Works
+both ways I guess.
+
+
